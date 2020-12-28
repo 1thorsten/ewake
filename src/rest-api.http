@@ -1,0 +1,34 @@
+PUT http://localhost:5555/manageClients
+Content-Type: application/json
+
+{
+  "name": "1thorsten",
+  "description": "serv1",
+  "mac": "E4:54:E8:A4:17:1F",
+  "ip": "10.40.4.162",
+  "check": "tcp:3389"
+}
+
+###
+
+DELETE http://localhost:5555/manageClients
+Content-Type: application/json
+
+{
+  "mac": "E4:54:E8:A4:17:1F",
+  "ip": "10.40.4.162"
+}
+
+###
+
+DELETE http://localhost:5555/client
+Content-Type: application/json
+
+{
+  "mac": "E4:54:E8:A4:97:2F",
+  "ip": "10.10.0.62"
+}
+
+###
+
+

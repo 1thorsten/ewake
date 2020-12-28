@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "incremental": true,
+    "target": "es2019",
+    "sourceMap": true,
+    "skipLibCheck": false,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "lib": [
+      "es2018"
+    ],
+    "types": [
+      "node"
+    ]
+  }
+}
