@@ -21,14 +21,5 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:5555/client
-Content-Type: application/json
-
-{
-  "mac": "E4:54:E8:A4:97:2F",
-  "ip": "10.10.0.62"
-}
-
-###
 
 
