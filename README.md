@@ -60,7 +60,7 @@ ewake records the actions to detect problems easier.
 http://localhost:5555/check
 ```
 
-#Get it to work
+# Get it to work
 ewake uses webpack to put all the components into a dependency-free javascript file that is simply executed using node.
 
 Thus, only the resulting javascript file is needed on the server running ewake. The modules needed for development (node_modules) are no longer needed here.
