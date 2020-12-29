@@ -39,8 +39,19 @@ Content-Type: application/json
 "ip": "10.40.4.162",
 "check": "tcp:3389"
 }
+
+###
+
+DELETE http://localhost:5555/manageClients
+Content-Type: application/json
+
+{
+  "mac": "E4:54:E8:A4:17:1F",
+  "ip": "10.40.4.162"
+}
 ```
-ewake shows which computers are currently running.
+
+ewake shows which computers are currently running by applying the specified check (e.g. check tcp-port 3389).
 ```http request
 http://localhost:5555/activeClients
 ```
