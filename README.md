@@ -85,3 +85,7 @@ You can also just download the latest release from [here](https://github.com/1th
 docker-compose -f ./docker/docker-compose.yml pull
 docker-compose up -d
 ```
+- from github (without anything cloning the repo)
+```
+curl -s https://raw.githubusercontent.com/1thorsten/ewake/main/docker/docker/docker-compose.yml | docker-compose -f - up
+```
