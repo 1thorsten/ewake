@@ -81,11 +81,19 @@ You can also just download the latest release from [here](https://github.com/1th
 
 ## with docker
 - Pull the latest image and start the container (after cloning the repo)
-```
+```bash
 docker-compose -f ./docker/docker-compose.yml pull
 docker-compose up -d
 ```
-- from github (without anything cloning the repo)
-```
-curl -s https://raw.githubusercontent.com/1thorsten/ewake/main/docker/docker/docker-compose.yml | docker-compose -f - up
+- direct from github (without cloning the repo)
+```bash
+DIR=/opt/docker/ewake ;\
+URL=https://raw.githubusercontent.com/1thorsten/ewake/main/docker/docker-compose.yml ;\
+set -x ;\
+test -e $DIR/docker-compose.yml && docker-compose -f $DIR/docker-compose.yml down ;\
+mkdir -p $DIR && rm -f $DIR/docker-compose.yml ;\
+wget -q $URL -P $DIR ;\
+docker-compose -f $DIR/docker-compose.yml pull ;\
+docker-compose -f $DIR/docker-compose.yml up -d && sleep 2 && docker-compose -f $DIR/docker-compose.yml logs ;\
+set +x
 ```
