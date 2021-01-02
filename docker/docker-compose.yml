@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  ewake:
+    image: 1thorsten/ewake:latest
+    container_name: ewake
+    network_mode: host
+    ports:
+      - "5555:5555"
+    restart: unless-stopped
+    volumes:
+      - ewake-clients:/ewake-clients
+volumes:
+  ewake-clients:

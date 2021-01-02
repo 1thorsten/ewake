@@ -1,7 +1,7 @@
 # ewake
 Web application that manages computers to wake up via WakeOnLan
 
-# Install
+# Installation
 Install with npm:
 
 ```bash
@@ -61,6 +61,7 @@ http://localhost:5555/check
 ```
 
 # Get it to work
+## direct without docker
 ewake uses webpack to put all the components into a dependency-free javascript file that is simply executed using node.
 
 Thus, only the resulting javascript file is needed on the server running ewake. The modules needed for development (node_modules) are no longer needed here.
@@ -77,3 +78,10 @@ node ewake.js
 ```
 
 You can also just download the latest release from [here](https://github.com/1thorsten/ewake/releases).
+
+## with docker
+- Pull the latest image and start the container (after cloning the repo)
+```
+docker-compose -f ./docker/docker-compose.yml pull
+docker-compose up -d
+```
