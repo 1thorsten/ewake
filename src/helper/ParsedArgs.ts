@@ -45,7 +45,7 @@ function handleArgs(): Opts {
 
 // Use `parser.help()` for formatted options help.
     if (opts.help) {
-        const help = parser.help({includeEnv: true}).trimRight();
+        const help = parser.help({includeEnv: true, includeDefault: true}).trimRight();
         console.log('usage: node ewake.js [OPTIONS]\n'
             + 'options:\n'
             + help);
