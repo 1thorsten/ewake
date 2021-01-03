@@ -89,11 +89,9 @@ docker-compose up -d
 ```bash
 DIR=/opt/docker/ewake ;\
 URL=https://raw.githubusercontent.com/1thorsten/ewake/main/docker/docker-compose.yml ;\
-set -x ;\
 test -e $DIR/docker-compose.yml && docker-compose -f $DIR/docker-compose.yml down ;\
 mkdir -p $DIR && rm -f $DIR/docker-compose.yml ;\
 wget -q $URL -P $DIR ;\
 docker-compose -f $DIR/docker-compose.yml pull ;\
-docker-compose -f $DIR/docker-compose.yml up -d && sleep 2 && docker-compose -f $DIR/docker-compose.yml logs ;\
-set +x
+docker-compose -f $DIR/docker-compose.yml up -d && sleep 2 && docker-compose -f $DIR/docker-compose.yml logs
 ```
