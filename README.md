@@ -61,7 +61,7 @@ http://localhost:5555/check
 ```
 
 # Get it to work
-## direct without docker
+## direct without Docker
 ewake uses webpack to put all the components into a dependency-free javascript file that is simply executed using node.
 
 Thus, only the resulting javascript file is needed on the server running ewake. The modules needed for development (node_modules) are no longer needed here.
@@ -79,19 +79,13 @@ node ewake.js
 
 You can also just download the latest release from [here](https://github.com/1thorsten/ewake/releases).
 
-## with docker
-- Pull the latest image and start the container (after cloning the repo)
+## with Docker
 ```bash
-docker-compose -f ./docker/docker-compose.yml pull
-docker-compose up -d
+# on linux (network = host)
+docker run -d --restart unless-stopped --network host -e EWAKE_PORT=5555 -v ewake-clients:/ewake-clients --name ewake 1thorsten/ewake:latest
 ```
-- direct from github (without cloning the repo)
 ```bash
-DIR=/opt/docker/ewake ;\
-URL=https://raw.githubusercontent.com/1thorsten/ewake/main/docker/docker-compose.yml ;\
-test -e $DIR/docker-compose.yml && docker-compose -f $DIR/docker-compose.yml down ;\
-mkdir -p $DIR && rm -f $DIR/docker-compose.yml ;\
-wget -q $URL -P $DIR ;\
-docker-compose -f $DIR/docker-compose.yml pull ;\
-docker-compose -f $DIR/docker-compose.yml up -d && sleep 2 && docker-compose -f $DIR/docker-compose.yml logs
+# on windows,mac (network = bridged, dissolving client mac-address does not working properly)
+docker run -d --restart unless-stopped -p 5555:5555 -v ewake-clients:/ewake-clients --name ewake 1thorsten/ewake:latest
 ```
+
