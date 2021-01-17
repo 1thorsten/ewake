@@ -5,7 +5,9 @@ import {PackageInfo} from "./Helper";
 export type Opts = { PORT: number, CLIENT_JSON: string }
 
 function handleArgs(): Opts {
-    const processedOpts: Opts = {PORT: 5555, CLIENT_JSON: "resources/client.json"};
+    // get PORT from env or take 5555 as default
+    const defaultPort = process.env["EWAKE_PORT"] || "5555";
+    const processedOpts: Opts = {PORT: parseInt(defaultPort), CLIENT_JSON: "resources/client.json"};
 
 // https://www.npmjs.com/package/dashdash
     const options: Array<Option> = [

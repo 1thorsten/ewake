@@ -1,13 +1,14 @@
 {
 	"name": "ewake",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Web application that manages computers to wake up via WakeOnLan",
 	"private": true,
 	"scripts": {
 		"increase_version": "npm version patch",
 		"build:dist": "webpack --config webpack/webpack.prod.js --progress",
 		"build:dist-dev": "webpack --config webpack/webpack.dev.js",
-		"build:dist-docker": "webpack --config webpack/webpack.prod.js --progress && docker build -t 1thorsten/ewake --file ./docker/Dockerfile .",
+		"build:dist-docker": "webpack --config webpack/webpack.prod.js --progress && docker build --pull -t 1thorsten/ewake --file ./docker/Dockerfile .",
+		"docker:push": "docker push 1thorsten/ewake",
 		"compile": "node utils/RemoveTranspiledFiles.js ./src-js && tsc --build --clean && tsc --build"
 	},
 	"devDependencies": {
