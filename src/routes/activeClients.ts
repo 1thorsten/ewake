@@ -7,7 +7,7 @@ import {Client, ClientManagement} from "../helper/ClientManagement";
 export async function activeClients(res: http.ServerResponse): Promise<void> {
     headerHtml200(res);
     const mgmt = ClientManagement.instance;
-    const allClients: Array<Client> = mgmt.allClients;
+    const allClients: Array<Client> = await mgmt.allClients();
     allClients.sort((a, b) => a.name.localeCompare(b.name));
 
     const overview = await Promise.all(

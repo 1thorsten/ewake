@@ -80,12 +80,35 @@ node ewake.js
 You can also just download the latest release from [here](https://github.com/1thorsten/ewake/releases).
 
 ## with Docker
+### network = host
+network should be host to use all features (e.g. dissolving client mac-address)
+
+- manage clients with a file (no cluster possible)
 ```bash
-# on linux (network = host)
 docker run -d --restart unless-stopped --network host -e EWAKE_PORT=5555 -v ewake-clients:/ewake-clients --name ewake 1thorsten/ewake:latest
 ```
+- manage clients through http (cluster mode)
+you can link the client-resource for reading the data
 ```bash
-# on windows,mac (network = bridged, dissolving client mac-address does not working properly)
+docker run -d --restart unless-stopped --network host -e EWAKE_PORT=5555 -e EWAKE_JSON_HTTP=https://raw.githubusercontent.com/1thorsten/ewake/main/src/resources/client.json --name ewake 1thorsten/ewake:latest
+```
+- manage clients through http and write via dav (cluster mode)
+you can use e.g. https://github.com/1thorsten/http-over-all for manage the client-resource. http-over-all offers access via http and also dav. So ewake can write the data back from every running instance. Perfect for shared usage.
+```bash
+docker run -d --restart unless-stopped --network host -e EWAKE_PORT=5555 -e EWAKE_JSON_HTTP=http://http-over-all:8338/mysamba/clients.json -e EWAKE_JSON_HTTP_WRITE=http://http-over-all:8338/dav/mysamba/clients.json --name ewake 1thorsten/ewake:latest
+```
+### network = bridged
+on Windows and mac network=host does not work properly
+```bash
 docker run -d --restart unless-stopped -p 5555:5555 -v ewake-clients:/ewake-clients --name ewake 1thorsten/ewake:latest
 ```
-
+- manage clients through http (cluster mode)
+  you can link the client-resource for reading the data
+```bash
+docker run -d --restart unless-stopped -p 5555:5555 -e EWAKE_JSON_HTTP=https://raw.githubusercontent.com/1thorsten/ewake/main/src/resources/client.json --name ewake 1thorsten/ewake:latest
+```
+- manage clients through http and write via dav (cluster mode)
+  you can use e.g. https://github.com/1thorsten/http-over-all for manage the client-resource. http-over-all offers access via http and also dav. So ewake can write the data back from every running instance. Perfect for shared usage.
+```bash
+docker run -d --restart unless-stopped -p 5555:5555 -e EWAKE_JSON_HTTP=http://http-over-all:8338/mysamba/clients.json -e EWAKE_JSON_HTTP_WRITE=http://http-over-all:8338/dav/mysamba/clients.json --name ewake 1thorsten/ewake:latest
+```

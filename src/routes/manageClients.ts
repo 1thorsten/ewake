@@ -7,7 +7,7 @@ export async function addClient(req: http.IncomingMessage, res: http.ServerRespo
 
     const clientData = await readRequestData(req);
     const client: Client = JSON.parse(clientData);
-    ClientManagement.instance.addClient(client);
+    await ClientManagement.instance.addClient(client);
 
     res.end();
 }
@@ -17,7 +17,7 @@ export async function deleteClient(req: http.IncomingMessage, res: http.ServerRe
 
     const clientData = await readRequestData(req);
     const client: Client = JSON.parse(clientData);
-    ClientManagement.instance.deleteClient(client);
+    await ClientManagement.instance.deleteClient(client);
 
     res.end();
 }

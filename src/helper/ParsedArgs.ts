@@ -1,13 +1,26 @@
 import * as dashdash from "dashdash";
 import {Option} from "dashdash";
 import {PackageInfo} from "./Helper";
+import {URL} from "url";
 
-export type Opts = { PORT: number, CLIENT_JSON: string }
+export type Opts = { PORT: number, CLIENT_JSON?: string, HTTP_GET?: URL, HTTP_WRITE?: URL }
 
 function handleArgs(): Opts {
     // get PORT from env or take 5555 as default
     const defaultPort = process.env["EWAKE_PORT"] || "5555";
-    const processedOpts: Opts = {PORT: parseInt(defaultPort), CLIENT_JSON: "resources/client.json"};
+    let defaultClientJson = process.env["EWAKE_JSON_FILE"] || undefined;
+    const defaultHttpGet = process.env["EWAKE_JSON_HTTP"] ? new URL(process.env["EWAKE_JSON_HTTP"]) : undefined;
+    const defaultHttpWrite = process.env["EWAKE_JSON_HTTP_WRITE"] ? new URL(process.env["EWAKE_JSON_HTTP_WRITE"]) : undefined;
+
+    if (defaultClientJson && defaultHttpGet) {
+        defaultClientJson = undefined;
+    }
+    const processedOpts: Opts = {
+        PORT: parseInt(defaultPort),
+        CLIENT_JSON: defaultClientJson,
+        HTTP_GET: defaultHttpGet,
+        HTTP_WRITE: defaultHttpWrite
+    };
 
 // https://www.npmjs.com/package/dashdash
     const options: Array<Option> = [
@@ -24,13 +37,25 @@ function handleArgs(): Opts {
             names: ['file', 'f'],
             type: 'string',
             help: 'File to load and save the clients as json',
-            helpArg: processedOpts.CLIENT_JSON
+            helpArg: "resources/clients.json"
         },
         {
             names: ['port', 'p'],
             type: 'number',
             help: 'Port on which the server listens',
             helpArg: processedOpts.PORT.toString()
+        },
+        {
+            names: ['http'],
+            type: 'string',
+            help: 'json-object for http-get',
+            helpArg: "http://USER:PASS@localhost:8338/local/client.json"
+        },
+        {
+            names: ['httpWrite'],
+            type: 'string',
+            help: 'json-object for http-write (DAV)',
+            helpArg: "http://USER:PASS@localhost:8338/local/client.json"
         }
     ];
 
@@ -46,11 +71,14 @@ function handleArgs(): Opts {
     }
 
 // Use `parser.help()` for formatted options help.
-    if (opts.help) {
+    const showHelp = () => {
         const help = parser.help({includeEnv: true, includeDefault: true}).trimRight();
         console.log('usage: node ewake.js [OPTIONS]\n'
             + 'options:\n'
             + help);
+    }
+    if (opts.help) {
+        showHelp();
         process.exit(0);
     }
     if (opts.version) {
@@ -63,7 +91,29 @@ function handleArgs(): Opts {
     if (opts.file) {
         processedOpts.CLIENT_JSON = opts.file;
     }
+    if (opts.http) {
+        if (opts.file) {
+            console.warn("you cannot mix option file with option http");
+            showHelp();
+            process.exit(1);
+        }
 
+        processedOpts.HTTP_GET = new URL(opts.http);
+    }
+    if (opts.httpWrite) {
+        if (!opts.http) {
+            console.warn("you have to specify option http");
+            showHelp();
+            process.exit(1);
+        }
+        processedOpts.HTTP_WRITE = new URL(opts.httpWrite);
+    }
+
+    if (!processedOpts.CLIENT_JSON && !processedOpts.HTTP_GET) {
+        console.warn("you have to specify one option for receiving clients.json (option file or option http)");
+        showHelp();
+        process.exit(1);
+    }
     return processedOpts;
 }
 
@@ -74,4 +124,3 @@ export class ParsedArgs {
         return this.processedOpts;
     }
 }
-
