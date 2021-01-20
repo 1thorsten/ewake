@@ -5,6 +5,8 @@ import {Tcp} from "./Tcp";
 import * as wol from "wake_on_lan";
 import {ErrorCallback} from "wake_on_lan";
 import * as path from "path";
+import axios, {AxiosRequestConfig} from "axios";
+import {URL} from "url";
 
 export type Client = {
     name: string,
@@ -14,27 +16,24 @@ export type Client = {
     check: string
 }
 
-export class ClientManagement {
-    private static INSTANCE = new ClientManagement();
-    private readonly CLIENT_DATA: Array<Client> = ClientManagement.loadClients();
+interface ClientOperation {
+    clientsUptodate(): Promise<boolean>;
 
-    private constructor() {
+    loadClients(): Promise<Array<Client>>;
+
+    storePossible(): boolean;
+
+    storeClients(CLIENT_DATA: Array<Client>): Promise<void>;
+}
+
+class ClientFileSystemOperation implements ClientOperation {
+
+    async clientsUptodate(): Promise<boolean> {
+        return new Promise<boolean>(resolve => resolve(true));
     }
 
-    public static get instance(): ClientManagement {
-        return ClientManagement.INSTANCE;
-    }
-
-    /**
-     * get all clients
-     * @return {Array<Client>}
-     */
-    public get allClients(): Array<Client> {
-        return [...this.CLIENT_DATA];
-    }
-
-    private static loadClients(): Array<Client> {
-        const clientjson = ParsedArgs.getOpts().CLIENT_JSON;
+    async loadClients(): Promise<Array<Client>> {
+        const clientjson = ParsedArgs.getOpts().CLIENT_JSON!;
         if (existsSync(clientjson)) {
             console.log(localFormattedTime() + `: (loadClients) -> ${ParsedArgs.getOpts().CLIENT_JSON}`);
             const content = readFileSync(clientjson, "utf-8");
@@ -51,18 +50,127 @@ export class ClientManagement {
         return [];
     }
 
+    storePossible(): boolean {
+        return true;
+    }
+
+    async storeClients(CLIENT_DATA: Array<Client>): Promise<void> {
+        if (CLIENT_DATA && Array.isArray(CLIENT_DATA)) {
+            CLIENT_DATA.sort((a, b) => a.name.localeCompare(b.name));
+            console.log(localFormattedTime() + `: (storeClients) -> ${ParsedArgs.getOpts().CLIENT_JSON} (elements: ${CLIENT_DATA.length})`);
+            writeFileSync(ParsedArgs.getOpts().CLIENT_JSON!, JSON.stringify(CLIENT_DATA, null, 2), {encoding: "utf8"});
+        }
+    }
+}
+
+class ClientHttpOperation implements ClientOperation {
+    private lastModified: string = "";
+
+    private static handleUrl(url: URL): { url: string, requestConfig: AxiosRequestConfig } {
+        // https://nodejs.org/api/url.html
+        const httpUrl = `${url.origin}${url.pathname}`;
+        let requestConfig: AxiosRequestConfig = {};
+        if (url.username) {
+            requestConfig.auth = {username: url.username, password: url.password};
+        }
+        return {url: httpUrl, requestConfig};
+    }
+
+    async clientsUptodate(): Promise<boolean> {
+        const pUrl = ClientHttpOperation.handleUrl(ParsedArgs.getOpts().HTTP_GET!);
+        const fmt = localFormattedTime();
+        console.time(`${fmt}: (clientsUptodate) http head '${pUrl.url}'`);
+        try {
+            const rs = await axios.head(pUrl.url, pUrl.requestConfig);
+            return this.lastModified === rs.headers['last-modified'];
+        } catch (ex) {
+            console.warn("(clientsUptodate) could not send head request to " + pUrl.url);
+        }
+        console.timeEnd(`${fmt}: (clientsUptodate) http head '${pUrl.url}'`);
+        return true;
+    }
+
+    async loadClients(): Promise<Array<Client>> {
+        const pUrl = ClientHttpOperation.handleUrl(ParsedArgs.getOpts().HTTP_GET!);
+        const fmt = localFormattedTime();
+        console.time(`${fmt}: (loadlients) http get '${pUrl.url}'`);
+        try {
+            const rs = await axios.get(pUrl.url, pUrl.requestConfig);
+            this.lastModified = rs.headers['last-modified'];
+            const clients: Array<Client> = rs.data;
+            clients.sort((a, b) => a.name.localeCompare(b.name));
+            return clients;
+        } catch (ex) {
+            console.error("could not load clients from " + pUrl.url, ex);
+        } finally {
+            console.timeEnd(`${fmt}: (loadlients) http get '${pUrl.url}'`);
+        }
+        return [];
+    }
+
+    storePossible(): boolean {
+        return ParsedArgs.getOpts().HTTP_WRITE !== undefined;
+    }
+
+    async storeClients(CLIENT_DATA: Array<Client>): Promise<void> {
+        if (CLIENT_DATA && Array.isArray(CLIENT_DATA)) {
+            CLIENT_DATA.sort((a, b) => a.name.localeCompare(b.name));
+            const fmt = localFormattedTime();
+            if (!this.storePossible()) {
+                console.log(`${fmt}: (storeClients) storing not possible (option httpWrite)`);
+                return;
+            }
+            const pUrl = ClientHttpOperation.handleUrl(ParsedArgs.getOpts().HTTP_WRITE!);
+            console.time(`${fmt}: (storeClients) http put '${pUrl.url}'`);
+            try {
+                const rs = await axios.put(pUrl.url, CLIENT_DATA, pUrl.requestConfig);
+                this.lastModified = rs.headers['date'];
+            } catch (ex) {
+                console.error("could not write clients to " + pUrl.url, ex);
+            } finally {
+                console.timeEnd(`${fmt}: (storeClients) http put '${pUrl.url}'`);
+            }
+        }
+    }
+
+}
+
+export class ClientManagement {
+    private static INSTANCE = new ClientManagement();
+    private operation: ClientOperation;
+    private CLIENT_DATA: Array<Client> | undefined;
+
+    private constructor() {
+        this.operation = ParsedArgs.getOpts().CLIENT_JSON ? new ClientFileSystemOperation() : new ClientHttpOperation();
+    }
+
+    public static get instance(): ClientManagement {
+        return ClientManagement.INSTANCE;
+    }
+
+    /**
+     * get all clients
+     * @return {Array<Client>}
+     */
+    public async allClients(): Promise<Array<Client>> {
+        if (!this.CLIENT_DATA || !await this.operation.clientsUptodate()) {
+            this.CLIENT_DATA = await this.operation.loadClients();
+        }
+        return [...this.CLIENT_DATA!];
+    }
+
     /**
      * add a client and persist data afterwards
      * @param {Client} client
      * @return {boolean}
      */
-    public addClient(client: Client): boolean {
-        if (this.CLIENT_DATA.filter(e => e.mac === client.mac && e.ip === client.ip).length > 0) {
+    public async addClient(client: Client): Promise<boolean> {
+        if (this.CLIENT_DATA!.filter(e => e.mac === client.mac && e.ip === client.ip).length > 0) {
             return false;
         }
         console.log(localFormattedTime() + `: (addClient) ${client.name}`);
-        this.CLIENT_DATA.push(client);
-        this.persistClients();
+        this.CLIENT_DATA!.push(client);
+        await this.operation!.storeClients(this.CLIENT_DATA!);
         return true;
     }
 
@@ -70,29 +178,17 @@ export class ClientManagement {
      * delete the client (relevant for deletion is Client#ip and Client#mac), all clients will be persisted afterwards
      * @param {Client} client
      */
-    public deleteClient(client: Client): boolean {
-        const foundClient: Array<Client> = this.CLIENT_DATA.filter(e => e.mac === client.mac && e.ip === client.ip);
+    public async deleteClient(client: Client): Promise<boolean> {
+        const foundClient: Array<Client> = this.CLIENT_DATA!.filter(e => e.mac === client.mac && e.ip === client.ip);
         if (foundClient.length <= 0) {
             return false;
         }
         foundClient.forEach(c => {
             console.log(localFormattedTime() + `: (deleteClient) ${c.name}`);
-            this.CLIENT_DATA.splice(this.CLIENT_DATA.indexOf(c, 0), 1);
+            this.CLIENT_DATA!.splice(this.CLIENT_DATA!.indexOf(c, 0), 1);
         });
-        this.persistClients();
+        await this.operation!.storeClients(this.CLIENT_DATA!);
         return true;
-    }
-
-    /**
-     * save the client information to file (sorted)
-     * @private
-     */
-    private persistClients(): void {
-        if (this.CLIENT_DATA && Array.isArray(this.CLIENT_DATA)) {
-            this.CLIENT_DATA.sort((a, b) => a.name.localeCompare(b.name));
-            console.log(localFormattedTime() + `: (persistClients) -> ${ParsedArgs.getOpts().CLIENT_JSON} (elements: ${this.CLIENT_DATA.length})`);
-            writeFileSync(ParsedArgs.getOpts().CLIENT_JSON, JSON.stringify(this.CLIENT_DATA, null, 2), {encoding: "utf8"});
-        }
     }
 
     /**
@@ -126,10 +222,10 @@ export class ClientManagement {
 
     /**
      * send the magic packet
-     * @param mac
-     * @param broadcast
+     * @param {Client} client
+     * @param {string} broadcast
      */
-    public wakeup(client: Client, broadcast: string): Promise<void> {
+    public async wakeup(client: Client, broadcast: string): Promise<void> {
         return new Promise((resolve, reject) => {
             wol.wake(client.mac, {address: broadcast}, (error: ErrorCallback) => {
                 if (error) {

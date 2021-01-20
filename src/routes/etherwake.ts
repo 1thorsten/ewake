@@ -67,7 +67,7 @@ function errorCouldNotIdentifyGivenNetworkInterface(givenInterface: string, inte
 
 export async function etherwake(queryObject: { name?: string, interface?: string }, res: http.ServerResponse): Promise<void> {
     const mgmt = ClientManagement.instance;
-    const clients: Array<Client> = mgmt.allClients;
+    const clients: Array<Client> = await mgmt.allClients();
     const clientName = queryObject.name;
 
     // clientname not given

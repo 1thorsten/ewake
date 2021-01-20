@@ -4,6 +4,10 @@ LABEL description="ewake"
 
 ENV NODE_ENV=production
 ENV EWAKE_PORT=5555
+ENV EWAKE_JSON_FILE=/ewake-clients/clients.json
+#ENV EWAKE_JSON_HTTP
+#ENV EWAKE_JSON_HTTP_WRITE
+
 VOLUME [ "/ewake-clients" ]
 
 ADD dist/ewake /ewake/
@@ -20,6 +24,6 @@ RUN set -x && \
     find . -name "*.json" -exec sed -i 's/\r$//' {} \; && \
     set +x
 
-CMD ["ewake.js","--file=/ewake-clients/clients.json"]
+CMD ["ewake.js"]
 
 

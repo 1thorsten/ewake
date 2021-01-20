@@ -13,7 +13,7 @@ export async function tcpPing(queryObject: { name?: string, interface?: string }
     }
 
     // mac
-    const allClients: Array<Client> = ClientManagement.instance.allClients;
+    const allClients: Array<Client> = await ClientManagement.instance.allClients();
     const client = allClients.find(o => o.name.toUpperCase() === clientName);
     if (!client) {
         const message = `\
