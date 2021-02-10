@@ -34,18 +34,18 @@ export class LocalNetwork {
     }
 
     /**
-     * check whether the given interface (trimmed and lowercased) exists or not
+     * check whether the given ipv4-interface (trimmed and lowercased) exists or not
      * @param rqName
-     * @return NetworkInterface if interface exists OR string[] overview over all interfaces
+     * @return NetworkInterface if interface exists OR string[] overview over all external ipv4 interfaces
      */
     public static identifyNetworkInterface(rqName?: string): string[] | NetworkInterface {
-        const interfaces = os.networkInterfaces();
+        const interfaces: NodeJS.Dict<NetworkInterfaceInfo[]> = os.networkInterfaces();
         const names: string[] = Object.keys(interfaces);
         if (rqName) {
             const interfaceName = rqName.trim().toLowerCase();
             if (names.indexOf(interfaceName) !== -1 && Array.isArray(interfaces[interfaceName]) && interfaces[interfaceName]!.length > 0) {
-                const ipV4Interfaces: NetworkInterfaceInfo[] = (interfaces[interfaceName] as NetworkInterfaceInfo[]).filter(value => value.family === 'IPv4');
-                if (ipV4Interfaces) {
+                const ipV4Interfaces: NetworkInterfaceInfo[] = interfaces[interfaceName]!.filter(value => value.family === 'IPv4' && !value.internal);
+                if (Array.isArray(ipV4Interfaces) && ipV4Interfaces.length > 0) {
                     return {
                         address: ipV4Interfaces[0].address,
                         name: interfaceName,
@@ -55,7 +55,29 @@ export class LocalNetwork {
                 }
             }
         }
-        return names;
+
+        const ipv4Interfaces = names
+            .filter(interfaceName =>
+                interfaces[interfaceName]!
+                    .filter(value => value.family === 'IPv4' && !value.internal)
+                    .length > 0
+            );
+
+        ipv4Interfaces.sort();
+        return ipv4Interfaces;
+    }
+
+    /**
+     * check whether the given ipv4-interface (trimmed and lowercased) exists or not
+     * @param rqName
+     * @return NetworkInterface if interface exists OR undefined
+     */
+    public static identifyNetworkInterfaceStrict(rqName?: string): undefined | NetworkInterface {
+        const rs = this.identifyNetworkInterface(rqName);
+        if (Array.isArray(rs)) {
+            return undefined;
+        }
+        return rs;
     }
 
     /**

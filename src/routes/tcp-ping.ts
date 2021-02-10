@@ -1,10 +1,10 @@
 import * as http from "http";
 import {headerHtml200, httpError} from "../helper/Http";
-import {MetricData, EwakeMetrics} from "../helper/EwakeMetrics";
+import {EwakeMetrics, MetricData} from "../helper/EwakeMetrics";
 import {localFormattedTime, PackageInfo} from "../helper/Helper";
 import {Client, ClientManagement} from "../helper/ClientManagement";
 
-export async function tcpPing(queryObject: { name?: string, interface?: string }, res: http.ServerResponse): Promise<void> {
+export async function tcpPing(queryObject: { name?: string}, res: http.ServerResponse): Promise<void> {
     const clientName = queryObject.name;
     if (!clientName) {
         httpError(res, "plain", "USAGE: /tcp-ping?name=[Client:name]");
