@@ -4,6 +4,7 @@ import {EwakeMetrics, MetricData} from "../helper/EwakeMetrics";
 import {localFormattedTime, PackageInfo} from "../helper/Helper";
 import {Client, ClientManagement} from "../helper/ClientManagement";
 import {LocalNetwork, NetworkInterface} from "../helper/LocalNetwork";
+import {ParsedArgs} from "../helper/ParsedArgs";
 
 function errorClientNameNotGiven(clients: Array<Client>): string {
     return `\
@@ -41,31 +42,7 @@ function errorClientNotFound(clientName: string, clients: Array<Client>): string
         `;
 }
 
-function errorCouldNotIdentifyDefaultNetworkInterface(): string {
-    return `\
-                ${htmlLinks()}
-                <br>
-                <hr>
-                <strong>USAGE: /etherwake?name=[Client:name]&interface=[INTERFACE]</strong><br>
-                <br>
-                Could not identify an interface<br>
-            `;
-}
-
-function errorCouldNotIdentifyGivenNetworkInterface(givenInterface: string, interfaceOverview: string []): string {
-    return `\
-                ${htmlLinks()}
-                <br>
-                <hr>
-                <strong>USAGE: /etherwake?name=[Client:name]&interface=[INTERFACE]</strong><br>
-                <br>
-                Could not identify the interface: ${givenInterface}<br>
-                <br>Available interfaces:<br>
-                ${interfaceOverview.sort().join("<br>")}
-            `;
-}
-
-export async function etherwake(queryObject: { name?: string, interface?: string }, res: http.ServerResponse): Promise<void> {
+export async function etherwake(queryObject: { name?: string}, res: http.ServerResponse): Promise<void> {
     const mgmt = ClientManagement.instance;
     const clients: Array<Client> = await mgmt.allClients();
     const clientName = queryObject.name;
@@ -81,24 +58,6 @@ export async function etherwake(queryObject: { name?: string, interface?: string
     if (!client) {
         httpError(res, "html", errorClientNotFound(clientName, clients));
         return;
-    }
-
-    // interface
-    let iface: NetworkInterface;
-    if (!queryObject.interface) {
-        const detectedInterface = LocalNetwork.instance.networkInterface();
-        if (!detectedInterface) {
-            return httpError(res, "html", errorCouldNotIdentifyDefaultNetworkInterface());
-        } else {
-            iface = detectedInterface;
-        }
-    } else {
-        let ifaceCheck: NetworkInterface | string[] = LocalNetwork.identifyNetworkInterface(queryObject.interface)
-        if (Array.isArray(ifaceCheck)) {
-            return httpError(res, "html", errorCouldNotIdentifyGivenNetworkInterface(queryObject.interface, ifaceCheck));
-        } else {
-            iface = ifaceCheck;
-        }
     }
 
     const metricData: MetricData = {
@@ -130,6 +89,9 @@ export async function etherwake(queryObject: { name?: string, interface?: string
         );
         metricData.data = {awake: true};
     } else {
+        // interface
+        const iface: NetworkInterface = ParsedArgs.getOpts().NETWORK_INTERFACE!;
+
         res.write(`wakeup ${client.mac} (interface: ${iface.name} | broadcast: ${iface.broadcast})<br>`);
 
         let message;

@@ -4,6 +4,7 @@ import {htmlLinks, httpError} from './helper/Http';
 import {EwakeMetrics} from './helper/EwakeMetrics';
 import {localFormattedTime, PackageInfo} from './helper/Helper';
 import {Opts, ParsedArgs} from './helper/ParsedArgs';
+
 const opts: Opts = ParsedArgs.getOpts();
 
 try {
@@ -11,6 +12,8 @@ try {
     console.log('USAGE: /etherwake?name=[Client:name]');
 
     console.log(`Version: ${PackageInfo.version}`);
+    console.log(`Network Interface: ${opts.NETWORK_INTERFACE?.name}`);
+    console.log(`Broadcast Address: ${opts.NETWORK_INTERFACE?.broadcast}`);
 
     const server = httpServer();
     trapHandler(server);
@@ -25,15 +28,13 @@ function httpServer(): http.Server {
     return http.createServer(async (req, res) => {
 
         const parsedUrl = url.parse(req.url!, true);
-        const queryObject: { name?: string, interface?: string } = parsedUrl.query;
+        const queryObject: { name?: string } = parsedUrl.query;
 
         try {
             if (queryObject.name) {
                 queryObject.name = queryObject.name.toUpperCase().replace(/[^A-Z\/_]/g, '');
             }
-            if (queryObject.interface) {
-                queryObject.interface = queryObject.interface.replace(/[&;,<>]/g, '');
-            }
+
             const startTimestamp = localFormattedTime();
             if (req.method === 'GET') {
                 switch (parsedUrl.pathname) {

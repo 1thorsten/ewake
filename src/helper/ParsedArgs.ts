@@ -2,8 +2,9 @@ import * as dashdash from "dashdash";
 import {Option} from "dashdash";
 import {PackageInfo} from "./Helper";
 import {URL} from "url";
+import {LocalNetwork, NetworkInterface} from "./LocalNetwork";
 
-export type Opts = { PORT: number, CLIENT_JSON?: string, HTTP_GET?: URL, HTTP_WRITE?: URL }
+export type Opts = { PORT: number, CLIENT_JSON?: string, HTTP_GET?: URL, HTTP_WRITE?: URL, NETWORK_INTERFACE?: NetworkInterface };
 
 function handleArgs(): Opts {
     // get PORT from env or take 5555 as default
@@ -11,6 +12,8 @@ function handleArgs(): Opts {
     let defaultClientJson = process.env["EWAKE_JSON_FILE"] || undefined;
     const defaultHttpGet = process.env["EWAKE_JSON_HTTP"] ? new URL(process.env["EWAKE_JSON_HTTP"]) : undefined;
     const defaultHttpWrite = process.env["EWAKE_JSON_HTTP_WRITE"] ? new URL(process.env["EWAKE_JSON_HTTP_WRITE"]) : undefined;
+    const defaultNetworkInterface = process.env["EWAKE_NETWORK_INTERFACE"] ?
+        LocalNetwork.identifyNetworkInterfaceStrict(process.env["EWAKE_NETWORK_INTERFACE"]) : LocalNetwork.instance.networkInterface();
 
     if (defaultClientJson && defaultHttpGet) {
         defaultClientJson = undefined;
@@ -19,7 +22,8 @@ function handleArgs(): Opts {
         PORT: parseInt(defaultPort),
         CLIENT_JSON: defaultClientJson,
         HTTP_GET: defaultHttpGet,
-        HTTP_WRITE: defaultHttpWrite
+        HTTP_WRITE: defaultHttpWrite,
+        NETWORK_INTERFACE: defaultNetworkInterface
     };
 
 // https://www.npmjs.com/package/dashdash
@@ -38,6 +42,12 @@ function handleArgs(): Opts {
             type: 'string',
             help: 'File to load and save the clients as json',
             helpArg: "resources/clients.json"
+        },
+        {
+            names: ['interface', 'i'],
+            type: 'string',
+            help: 'network interface (ipv4)',
+            helpArg: processedOpts.NETWORK_INTERFACE?.name
         },
         {
             names: ['port', 'p'],
@@ -109,11 +119,22 @@ function handleArgs(): Opts {
         processedOpts.HTTP_WRITE = new URL(opts.httpWrite);
     }
 
+    if (opts.interface) {
+        const networkInterface = LocalNetwork.identifyNetworkInterface(opts.interface);
+        if (Array.isArray(networkInterface)) {
+            console.warn("Could not identify given network interface: " + opts.interface);
+            console.log(`Possible interfaces (ipv4, external):\n${JSON.stringify(networkInterface,null,2)}`);
+            process.exit(1);
+        }
+        processedOpts.NETWORK_INTERFACE = networkInterface;
+    }
+
     if (!processedOpts.CLIENT_JSON && !processedOpts.HTTP_GET) {
         console.warn("you have to specify one option for receiving clients.json (option file or option http)");
         showHelp();
         process.exit(1);
     }
+
     return processedOpts;
 }
 
