@@ -196,7 +196,10 @@ export class ClientManagement {
      * @param {Client} client
      */
     public async isAvailabe(client: Client): Promise<boolean> {
-        const toCheck = (check: string = "tcp:3389"): { protcol: string, port: number } => {
+        const toCheck = (check: string): { protcol: string, port: number } => {
+            if (!check) {
+                throw Error("you have to specify what to check (e.g. tcp:3389)");
+            }
             // tcp:3389
             const splitted = check.split(":");
             if (splitted.length != 2) {
@@ -217,7 +220,12 @@ export class ClientManagement {
             }
             return {protcol: protocol, port: port};
         }
-        return await Tcp.checkTcpPort(toCheck(client.check).port, client.ip);
+        try {
+            return await Tcp.checkTcpPort(toCheck(client.check).port, client.ip);
+        } catch(e) {
+            console.log(localFormattedTime() + `: (isAvailabe) ${e.message} -> ${client.name}`);
+        }
+        return false;
     }
 
     /**
