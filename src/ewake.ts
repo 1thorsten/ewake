@@ -32,7 +32,7 @@ function httpServer(): http.Server {
 
         try {
             if (queryObject.name) {
-                queryObject.name = queryObject.name.toUpperCase().replace(/[^0-9A-Z\/_]/g, '');
+                queryObject.name = queryObject.name.toUpperCase().replace(/[^0-9A-Z\/_\-]/g, '');
             }
 
             const startTimestamp = localFormattedTime();
