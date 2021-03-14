@@ -196,7 +196,7 @@ export class ClientManagement {
      * @param {Client} client
      */
     public async isAvailabe(client: Client): Promise<boolean> {
-        const toCheck = (check: string): { protcol: string, port: number } => {
+        const toCheck = (check: string = "tcp:3389"): { protcol: string, port: number } => {
             // tcp:3389
             const splitted = check.split(":");
             if (splitted.length != 2) {
