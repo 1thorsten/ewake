@@ -32,7 +32,7 @@ function httpServer(): http.Server {
 
         try {
             if (queryObject.name) {
-                queryObject.name = queryObject.name.toUpperCase().replace(/[^A-Z\/_]/g, '');
+                queryObject.name = queryObject.name.toUpperCase().replace(/[^0-9A-Z\/_\-]/g, '');
             }
 
             const startTimestamp = localFormattedTime();
@@ -62,6 +62,10 @@ function httpServer(): http.Server {
                         console.time(`${startTimestamp}: ewake / call clientInfo`);
                         await require('./routes/clientInfo').clientInfo(req, res);
                         console.timeEnd(`${startTimestamp}: ewake / call clientInfo`);
+                        break;
+                    case '/favicon.ico':
+                        res.writeHead(404);
+                        res.end("404 Not found")
                         break;
                     default:
                         // noinspection HtmlUnknownTarget

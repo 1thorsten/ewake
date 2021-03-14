@@ -84,7 +84,7 @@ export async function etherwake(queryObject: { name?: string}, res: http.ServerR
             ${htmlLinks()}
             <br>
             <strong>
-                Computer (${client.ip}) seems to be ready, you can connect (tcp-port: 3389)
+                Computer (${client.ip}) seems to be ready, you can connect (${client.check})
             </strong><br>`
         );
         metricData.data = {awake: true};

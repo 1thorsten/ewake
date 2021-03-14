@@ -1,7 +1,6 @@
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const arguments = {};
 let nextArgument = false;
 
 process.argv.slice(2).forEach((val) => {
@@ -50,7 +49,9 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.css', '.js']
+        extensions: ['.tsx', '.ts', '.css', '.js'],
+        // necessary for follow-redirects (transitive dependency from axois)
+        preferRelative: true
     },
     plugins: [
         new CleanWebpackPlugin(),
