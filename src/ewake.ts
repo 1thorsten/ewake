@@ -28,11 +28,13 @@ function httpServer(): http.Server {
     return http.createServer(async (req, res) => {
 
         const parsedUrl = url.parse(req.url!, true);
-        const queryObject: { name?: string } = parsedUrl.query;
+        const queryObject: { name?: string, user?: string } = parsedUrl.query;
 
         try {
             if (queryObject.name) {
                 queryObject.name = queryObject.name.toUpperCase().replace(/[^0-9A-Z\/_\-]/g, '');
+            } else if (queryObject.user) {
+                queryObject.name = queryObject.user.toUpperCase().replace(/[^0-9A-Z\/_\-]/g, '');
             }
 
             const startTimestamp = localFormattedTime();
