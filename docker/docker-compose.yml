@@ -5,10 +5,11 @@ services:
     image: 1thorsten/ewake:latest
     container_name: ewake
     network_mode: host
-    ports:
-      - "5555:5555"
     restart: unless-stopped
     volumes:
       - ewake-clients:/ewake-clients
+    labels:
+      # value (false,all,admin)
+      - docon.v1={"console":"admin","control":"all"}
 volumes:
   ewake-clients:
