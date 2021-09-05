@@ -75,7 +75,7 @@ function handleArgs(): Opts {
 
     try {
         opts = parser.parse(process.argv);
-    } catch (e) {
+    } catch (e: any) {
         console.error('ewake: error: %s', e.message);
         process.exit(1);
     }

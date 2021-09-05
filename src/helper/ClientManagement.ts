@@ -222,7 +222,7 @@ export class ClientManagement {
         }
         try {
             return await Tcp.checkTcpPort(toCheck(client.check).port, client.ip);
-        } catch(e) {
+        } catch(e: any) {
             console.log(localFormattedTime() + `: (isAvailabe) ${e.message} -> ${client.name}`);
         }
         return false;
