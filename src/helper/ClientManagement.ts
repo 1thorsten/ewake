@@ -97,7 +97,7 @@ class ClientHttpOperation implements ClientOperation {
         try {
             const rs = await axios.get(pUrl.url, pUrl.requestConfig);
             this.lastModified = rs.headers['last-modified'];
-            const clients: Array<Client> = rs.data;
+            const clients: Array<Client> = rs.data as Array<Client>;
             clients.sort((a, b) => a.name.localeCompare(b.name));
             return clients;
         } catch (ex) {

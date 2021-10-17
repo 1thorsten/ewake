@@ -8,7 +8,6 @@
 		"build:dist": "webpack --config webpack/webpack.prod.js --progress",
 		"build:dist-dev": "webpack --config webpack/webpack.dev.js",
 		"build:dist-docker": "webpack --config webpack/webpack.prod.js --progress && docker build --pull -t 1thorsten/ewake --file ./docker/Dockerfile .",
-		"docker:push": "docker push 1thorsten/ewake",
 		"docker:run": "docker-compose -f docker/docker-compose.yml up",
 		"compile": "node utils/RemoveTranspiledFiles.js ./src-js && tsc --build -pretty --clean && tsc --build"
 	},
@@ -26,7 +25,7 @@
 		"webpack-merge": "^5.7.3"
 	},
 	"dependencies": {
-		"axios": "^0.22.0",
+		"axios": "^0.23.0",
 		"dashdash": "^2.0.0",
 		"dayjs": "^1.10.4",
 		"request-ip": "^2.1.3",
