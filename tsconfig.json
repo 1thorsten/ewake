@@ -3,7 +3,7 @@
     "module": "commonjs",
     "outDir": "src-js",
     "incremental": true,
-    "target": "es2019",
+    "target": "ES2021",
     "sourceMap": true,
     "skipLibCheck": false,
     "strict": true,
@@ -11,7 +11,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "lib": [
-      "es2018","dom"
+      "ES2020","dom"
     ],
     "types": [
       "node"

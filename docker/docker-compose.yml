@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   ewake:
-    image: 1thorsten/ewake:latest
+    image: 1thorsten/ewake:1.0.12
     container_name: ewake
     network_mode: host
     restart: unless-stopped
