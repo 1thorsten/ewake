@@ -1,6 +1,6 @@
 {
 	"name": "ewake",
-	"version": "1.0.10",
+	"version": "1.0.11",
 	"description": "Web application that manages computers to wake up via WakeOnLan",
 	"private": true,
 	"scripts": {
