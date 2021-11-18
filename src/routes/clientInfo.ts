@@ -1,7 +1,7 @@
 import {headerHtml200} from "../helper/Http";
 import * as http from "http";
 import {IncomingMessage} from "http";
-import {localFormattedTime, PackageInfo} from "../helper/Helper";
+import {localFormattedTime, VERSION} from "../helper/Helper";
 import {EwakeMetrics} from "../helper/EwakeMetrics";
 import {Arp} from "../helper/Arp";
 
@@ -17,7 +17,7 @@ export async function clientInfo(req: IncomingMessage, res: http.ServerResponse)
             <title>Client Info</title>
         </head>
         <body style="font-family: 'Courier New', Courier, monospace; font-size: small;">
-            <b>${localFormattedTime()}: clientInfo (Version: ${PackageInfo.version}; Host: ${EwakeMetrics.hostname})</b><br><br><br>
+            <b>${localFormattedTime()}: clientInfo (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</b><br><br><br>
             <strong>IP-Address:</strong> ${clientIp}<br>
             <strong>MAC-Address:</strong> ${mac ? mac : "could not resolve mac address (seems to be that the server hosting ewake lies in a different network)"}<br>
             <pre>

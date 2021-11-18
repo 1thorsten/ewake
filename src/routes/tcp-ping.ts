@@ -1,7 +1,7 @@
 import * as http from "http";
 import {headerHtml200, httpError} from "../helper/Http";
 import {EwakeMetrics, MetricData} from "../helper/EwakeMetrics";
-import {localFormattedTime, PackageInfo} from "../helper/Helper";
+import {localFormattedTime, VERSION} from "../helper/Helper";
 import {Client, ClientManagement} from "../helper/ClientManagement";
 
 export async function tcpPing(queryObject: { name?: string}, res: http.ServerResponse): Promise<void> {
@@ -40,7 +40,7 @@ Client '${clientName.toUpperCase()}' not found.`;
             <title>tcp-ping ${client.name}</title>
         </head>
         <body style="font-family: 'Courier New', Courier, monospace; font-size: small;">
-            <b>${localFormattedTime()}: tcp-ping ${client.name} (Refresh every ${refreshSecs} secs; Version: ${PackageInfo.version}; Host: ${EwakeMetrics.hostname})</b><br><br><br>
+            <b>${localFormattedTime()}: tcp-ping ${client.name} (Refresh every ${refreshSecs} secs; Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</b><br><br><br>
             Computer is not ready, please wait... (${client.ip} is not responding to requests on ${client.check})`;
 
         metricData.data = {awake: false};
@@ -51,7 +51,7 @@ Client '${clientName.toUpperCase()}' not found.`;
             <title>tcp-ping ${client.name}</title>
         </head>
         <body style="font-family: 'Courier New', Courier, monospace; font-size: small;">
-            <b>${localFormattedTime()}: tcp-ping ${client.name} (Version: ${PackageInfo.version}; Host: ${EwakeMetrics.hostname})</b><br><br><br>
+            <b>${localFormattedTime()}: tcp-ping ${client.name} (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</b><br><br><br>
             <b>Computer (${client.ip}) seems to be ready, you can connect (${client.check})</b>`;
 
         metricData.data = {awake: true};

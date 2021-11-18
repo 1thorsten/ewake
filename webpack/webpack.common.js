@@ -1,6 +1,8 @@
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const webpack = require("webpack");
+const dayjs = require("dayjs");
 let nextArgument = false;
 
 process.argv.slice(2).forEach((val) => {
@@ -54,6 +56,9 @@ module.exports = {
         preferRelative: true
     },
     plugins: [
+        new webpack.DefinePlugin({
+            EWAKE_VERSION: JSON.stringify(dayjs().format()),
+        }),
         new CleanWebpackPlugin(),
         new CopyPlugin({
             patterns: [

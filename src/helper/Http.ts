@@ -1,6 +1,6 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {EwakeMetrics} from "./EwakeMetrics";
-import {localFormattedTime, PackageInfo} from "./Helper";
+import {localFormattedTime, VERSION} from "./Helper";
 
 /**
  * reads data from http request
@@ -30,7 +30,7 @@ export function httpError(res: ServerResponse, contentType: "plain" | "html", me
     let body;
     if (contentType === "plain") {
         res.writeHead(500, {'Content-Type': 'text/plain; charset=utf-8'});
-        res.write(`${localFormattedTime()}: etherwake (Version: ${PackageInfo.version}; Host: ${EwakeMetrics.hostname})\n\n`);
+        res.write(`${localFormattedTime()}: etherwake (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})\n\n`);
         body = message;
     } else {
         res.writeHead(500, {'Content-Type': 'text/html; charset=utf-8'});
@@ -40,7 +40,7 @@ export function httpError(res: ServerResponse, contentType: "plain" | "html", me
             <title>Etherwake - Usage (${EwakeMetrics.hostname})</title>
         </head>
         <body style="font-family: 'Courier New', Courier, monospace; font-size: small;">
-        <strong>${localFormattedTime()}: etherwake (Version: ${PackageInfo.version}; Host: ${EwakeMetrics.hostname})</strong><br><br>
+        <strong>${localFormattedTime()}: etherwake (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</strong><br><br>
         ${message}<br>
         </body>`;
     }

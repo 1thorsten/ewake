@@ -1,7 +1,7 @@
 import * as http from 'http';
 import {headerHtml200, htmlLinks, httpError} from "../helper/Http";
 import {EwakeMetrics, MetricData} from "../helper/EwakeMetrics";
-import {localFormattedTime, PackageInfo} from "../helper/Helper";
+import {localFormattedTime, VERSION} from "../helper/Helper";
 import {Client, ClientManagement} from "../helper/ClientManagement";
 import {LocalNetwork, NetworkInterface} from "../helper/LocalNetwork";
 import {ParsedArgs} from "../helper/ParsedArgs";
@@ -74,7 +74,7 @@ export async function etherwake(queryObject: { name?: string}, res: http.ServerR
         <title>Etherwake ${client.name} (${EwakeMetrics.hostname})</title>
     </head>
     <body style="font-family: 'Courier New', Courier, monospace; font-size: small;">
-        <strong>${localFormattedTime()}: etherwake ${client.name} (Version: ${PackageInfo.version}; Host: ${EwakeMetrics.hostname})</strong>
+        <strong>${localFormattedTime()}: etherwake ${client.name} (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</strong>
         <br><br>`;
 
     res.write(htmlStart);

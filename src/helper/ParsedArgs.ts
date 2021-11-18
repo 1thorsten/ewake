@@ -1,8 +1,8 @@
 import * as dashdash from "dashdash";
 import {Option} from "dashdash";
-import {PackageInfo} from "./Helper";
 import {URL} from "url";
 import {LocalNetwork, NetworkInterface} from "./LocalNetwork";
+import {VERSION} from "./Helper";
 
 export type Opts = { PORT: number, CLIENT_JSON?: string, HTTP_GET?: URL, HTTP_WRITE?: URL, NETWORK_INTERFACE?: NetworkInterface };
 
@@ -92,7 +92,7 @@ function handleArgs(): Opts {
         process.exit(0);
     }
     if (opts.version) {
-        console.log("ewake.js, version " + PackageInfo.version);
+        console.log("ewake.js, version " + VERSION());
         process.exit(0);
     }
     if (opts.port) {

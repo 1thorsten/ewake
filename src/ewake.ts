@@ -2,7 +2,7 @@ import * as http from 'http';
 import * as url from 'url';
 import {htmlLinks, httpError} from './helper/Http';
 import {EwakeMetrics} from './helper/EwakeMetrics';
-import {localFormattedTime, PackageInfo} from './helper/Helper';
+import {localFormattedTime, VERSION} from './helper/Helper';
 import {Opts, ParsedArgs} from './helper/ParsedArgs';
 
 const opts: Opts = ParsedArgs.getOpts();
@@ -11,7 +11,7 @@ try {
     console.log(`${localFormattedTime()}: (ewake): Start http-server on port: ${opts.PORT}`);
     console.log('USAGE: /etherwake?name=[Client:name]');
 
-    console.log(`Version: ${PackageInfo.version}`);
+    console.log(`Version: ${VERSION()}`);
     console.log(`Network Interface: ${opts.NETWORK_INTERFACE?.name}`);
     console.log(`Broadcast Address: ${opts.NETWORK_INTERFACE?.broadcast}`);
 
