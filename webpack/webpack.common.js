@@ -62,8 +62,8 @@ module.exports = {
         new CleanWebpackPlugin(),
         new CopyPlugin({
             patterns: [
-                {from: `src/resources`, to: 'resources', noErrorOnMissing: true},
-                {from: `src/package.json`, to: 'package.json', noErrorOnMissing: true},
+                {from: `src/resources`, to: 'resources', noErrorOnMissing: true, force: true},
+                {from: `src/package.json`, to: 'package.json', noErrorOnMissing: true, force: true},
             ]
         }),
     ],

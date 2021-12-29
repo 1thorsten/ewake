@@ -12,7 +12,7 @@ export async function activeClients(res: http.ServerResponse): Promise<void> {
 
     const overview = await Promise.all(
         allClients.map(async client =>
-            <{ client: Client, available: boolean }>{client, available: await mgmt.isAvailabe(client)}
+            ({client, available: await mgmt.isAvailabe(client)})
         ));
 
     const html = `\
