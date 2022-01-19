@@ -4,6 +4,7 @@ LABEL description="ewake"
 ARG USER=ewake
 
 ENV NODE_ENV=production
+ENV NODE_OPTIONS=--enable-source-maps
 ENV TZ=Europe/Berlin
 ENV EWAKE_PORT=5555
 ENV EWAKE_JSON_FILE=/ewake-clients/clients.json
@@ -20,8 +21,6 @@ WORKDIR /ewake
 RUN set -x && \
     apk add --update --no-cache tzdata sudo && \
     cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone && \
-    # add shebang line for all js-files without those from resources
-    find . -name 'resources' -prune -o -name '*.js' -exec sed -i '1i #!/usr/bin/env node' {} \; && \
     chmod 0500 /ewake/ewake.js && \
     adduser -D $USER && \
     echo "$USER ALL=(ALL) NOPASSWD:SETENV: /ewake/ewake.js" > /etc/sudoers.d/$USER && \
@@ -33,7 +32,7 @@ RUN set -x && \
     apk del tzdata && \
     set +x
 
-USER $USER
+#USER $USER
 
 CMD sudo -E /ewake/ewake.js
 

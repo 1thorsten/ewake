@@ -1,6 +1,7 @@
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const ShebangPlugin = require('webpack-shebang-plugin');
 const webpack = require("webpack");
 const dayjs = require("dayjs");
 let nextArgument = false;
@@ -66,6 +67,7 @@ module.exports = {
                 {from: `src/package.json`, to: 'package.json', noErrorOnMissing: true, force: true},
             ]
         }),
+        new ShebangPlugin(),
     ],
     output: {
         filename: `${mainModule}.js`,
@@ -80,3 +82,4 @@ module.exports = {
         __filename: true
     }
 };
+
