@@ -10,6 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "removeComments": true,
     "lib": [
       "ES2020","dom"
     ],
