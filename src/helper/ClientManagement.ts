@@ -6,7 +6,6 @@ import * as wol from "wake_on_lan";
 import {ErrorCallback} from "wake_on_lan";
 import * as path from "path";
 import axios, {AxiosRequestConfig} from "axios";
-import {URL} from "url";
 
 export type Client = {
     name: string,
@@ -96,7 +95,7 @@ class ClientHttpOperation implements ClientOperation {
         console.time(`${fmt}: (loadlients) http get '${pUrl.url}'`);
         try {
             const rs = await axios.get(pUrl.url, pUrl.requestConfig);
-            this.lastModified = rs.headers['last-modified'];
+            this.lastModified = rs.headers['last-modified'] ?? "";
             const clients: Array<Client> = rs.data as Array<Client>;
             clients.sort((a, b) => a.name.localeCompare(b.name));
             return clients;
@@ -124,7 +123,7 @@ class ClientHttpOperation implements ClientOperation {
             console.time(`${fmt}: (storeClients) http put '${pUrl.url}'`);
             try {
                 const rs = await axios.put(pUrl.url, CLIENT_DATA, pUrl.requestConfig);
-                this.lastModified = rs.headers['date'];
+                this.lastModified = rs.headers['date'] ?? "";
             } catch (ex) {
                 console.error("could not write clients to " + pUrl.url, ex);
             } finally {
@@ -222,7 +221,7 @@ export class ClientManagement {
         }
         try {
             return await Tcp.checkTcpPort(toCheck(client.check).port, client.ip);
-        } catch(e: any) {
+        } catch (e: any) {
             console.log(localFormattedTime() + `: (isAvailabe) ${e.message} -> ${client.name}`);
         }
         return false;
