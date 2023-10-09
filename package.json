@@ -1,6 +1,6 @@
 {
 	"name": "ewake",
-	"version": "1.0.30",
+	"version": "1.0.31",
 	"description": "Web application that manages computers to wake up via WakeOnLan",
 	"private": true,
 	"scripts": {
@@ -14,7 +14,7 @@
 	"devDependencies": {
 		"@types/dashdash": "^1.14.0",
 		"@types/node": "^18.11.9",
-		"@types/wake_on_lan": "^0.0.30",
+		"@types/wake_on_lan": "^0.0.31",
 		"clean-webpack-plugin": "^4.0.0",
 		"copy-webpack-plugin": "^11.0.0",
 		"terser-webpack-plugin": "^5.1.1",
