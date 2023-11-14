@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 LABEL maintainer="Thorsten Winkler"
 LABEL description="ewake"
 ARG USER=ewake

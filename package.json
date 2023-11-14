@@ -13,8 +13,8 @@
 	},
 	"devDependencies": {
 		"@types/dashdash": "^1.14.0",
-		"@types/node": "^18.11.9",
-		"@types/wake_on_lan": "^0.0.31",
+		"@types/node": "^20.9.0",
+		"@types/wake_on_lan": "^0.0.33",
 		"clean-webpack-plugin": "^4.0.0",
 		"copy-webpack-plugin": "^11.0.0",
 		"terser-webpack-plugin": "^5.1.1",
