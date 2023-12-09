@@ -24,7 +24,6 @@ Client '${clientName.toUpperCase()}' not found.`;
         return;
     }
 
-    headerHtml200(res);
     const metricData: MetricData = {
         date: new Date(),
         action: "tcp-ping",
@@ -57,6 +56,7 @@ Client '${clientName.toUpperCase()}' not found.`;
         metricData.data = {awake: true};
     }
     EwakeMetrics.instance.addData(metricData);
+    headerHtml200(res);
     res.write(html);
     res.end("</body>");
 }

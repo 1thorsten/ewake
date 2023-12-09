@@ -66,8 +66,6 @@ export async function etherwake(queryObject: { name?: string}, res: http.ServerR
         client
     };
 
-    headerHtml200(res);
-
     const htmlStart = `\
     <!DOCTYPE html>
     <head>
@@ -77,6 +75,7 @@ export async function etherwake(queryObject: { name?: string}, res: http.ServerR
         <strong>${localFormattedTime()}: etherwake ${client.name} (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</strong>
         <br><br>`;
 
+    headerHtml200(res);
     res.write(htmlStart);
     // check if the computer is already running
     if (await mgmt.isAvailabe(client)) {
