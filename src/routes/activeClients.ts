@@ -5,7 +5,6 @@ import {EwakeMetrics} from "../helper/EwakeMetrics";
 import {Client, ClientManagement} from "../helper/ClientManagement";
 
 export async function activeClients(res: http.ServerResponse): Promise<void> {
-    headerHtml200(res);
     const mgmt = ClientManagement.instance;
     const allClients: Array<Client> = await mgmt.allClients();
     allClients.sort((a, b) => a.name.localeCompare(b.name));
@@ -26,6 +25,7 @@ export async function activeClients(res: http.ServerResponse): Promise<void> {
             ${overview.map(e => `\
                 <span style="background-color: ${e.available ? "lightgreen" : "white"} ;"><span title="${e.client.ip} -> ${e.client.mac}">IP: ${e.client.ip}</span> | CLIENT: <span title="${e.client.name} -> ${e.client.description}">${e.client.name}</span></span><br>`).join("")}
          </body>`;
+    headerHtml200(res);
     res.write(html);
     res.end();
 }

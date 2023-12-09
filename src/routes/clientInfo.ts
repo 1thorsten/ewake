@@ -10,7 +10,6 @@ const requestIp = require("request-ip");
 export async function clientInfo(req: IncomingMessage, res: http.ServerResponse): Promise<void> {
     const clientIp = requestIp.getClientIp(req);
     const mac = await Arp.getMAC(clientIp);
-    headerHtml200(res);
     const html = `\
         <!DOCTYPE html>
         <head>
@@ -30,6 +29,8 @@ JSON for add or delete client
 }            
             </pre>
          </body>`;
+
+    headerHtml200(res);
     res.write(html);
     res.end();
 }
