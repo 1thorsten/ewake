@@ -12,8 +12,8 @@ services:
       - ewake-clients:/ewake-clients
     labels:
       # value (false,all,admin)
-      - docon.v1={"console":"admin","control":"all"}
-    ports:
-    - "5555:5555"
+      - docon.v1={"console":"admin","control":"all","show":"true"}
+    #ports:
+    #- "5555:5555"
 volumes:
   ewake-clients:
