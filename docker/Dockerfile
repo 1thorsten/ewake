@@ -35,6 +35,6 @@ RUN set -x && \
 
 USER $USER
 
-CMD sudo -E /ewake/ewake.js
+CMD ["sudo", "-E", "/ewake/ewake.js"]
 
 
