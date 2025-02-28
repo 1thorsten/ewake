@@ -129,6 +129,11 @@ function handleArgs(): Opts {
         processedOpts.NETWORK_INTERFACE = networkInterface;
     }
 
+    if (!processedOpts.NETWORK_INTERFACE) {
+        console.warn("Could not find any network interface");
+        process.exit(1);
+    }
+
     if (!processedOpts.CLIENT_JSON && !processedOpts.HTTP_GET) {
         console.warn("you have to specify one option for receiving clients.json (option file or option http)");
         showHelp();
