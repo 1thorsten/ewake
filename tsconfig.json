@@ -11,7 +11,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "lib": [
-      "ES2020","dom"
+      "ES2021","dom"
     ],
     "types": [
       "node"

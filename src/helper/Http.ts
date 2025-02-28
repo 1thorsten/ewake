@@ -21,6 +21,7 @@ export function htmlLinks(): string {
     return `\
             <strong>
                 <a href="/activeClients" target="_external">show active clients</a><br>
+                <a href="/etherwake">show configured etherwake targets</a><br>
                 <a href="/check" target="_external">show internal logs</a><br>
                 <a href="/clientInfo" target="_external">show ip address and mac address of the requesting host</a><br> 
             </strong>`;
