@@ -14,6 +14,7 @@ export async function activeClients(res: http.ServerResponse): Promise<void> {
             ({client, available: await mgmt.isAvailabe(client)})
         ));
 
+    const padLength = overview.reduce((accum, current) => Math.max(accum, current.client.ip.length), 0);
     const html = `\
         <!DOCTYPE html>
         <head>
@@ -23,7 +24,7 @@ export async function activeClients(res: http.ServerResponse): Promise<void> {
             <strong>${localFormattedTime()}: show active clients (Version: ${VERSION()}; Host: ${EwakeMetrics.hostname})</strong>
             <br><br>
             ${overview.map(e => `\
-                <span style="background-color: ${e.available ? "lightgreen" : "white"} ;"><span title="${e.client.ip} -> ${e.client.mac}">IP: ${e.client.ip}</span> | CLIENT: <span title="${e.client.name} -> ${e.client.description}">${e.client.name}</span></span><br>`).join("")}
+                <span style="background-color: ${e.available ? "lightgreen" : "white"} ;"><span title="${e.client.ip} -> ${e.client.mac}">IP: ${e.client.ip.padEnd(padLength).replaceAll(" ", "&nbsp;")}</span> | CLIENT: <span title="${e.client.name} -> ${e.client.description}">${e.client.name}</span></span><br>`).join("")}
          </body>`;
     headerHtml200(res);
     res.write(html);
