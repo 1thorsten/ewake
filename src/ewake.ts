@@ -40,6 +40,7 @@ function httpServer(): http.Server {
             const startTimestamp = localFormattedTime();
             if (req.method === 'GET') {
                 switch (parsedUrl.pathname) {
+                    case '/ewake':
                     case '/etherwake':
                         console.time(`${startTimestamp}: ewake / call etherwake ${queryObject.name ? `for ${queryObject.name}` : ''}`);
                         await require('./routes/etherwake').etherwake(queryObject, res);
