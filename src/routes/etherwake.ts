@@ -7,6 +7,7 @@ import {LocalNetwork, NetworkInterface} from "../helper/LocalNetwork";
 import {ParsedArgs} from "../helper/ParsedArgs";
 
 function errorClientNameNotGiven(clients: Array<Client>): string {
+    const padLength = clients.reduce((accum, current) => Math.max(accum, current.ip.length), 0);
     return `\
             ${htmlLinks()}
             <br>
@@ -24,7 +25,7 @@ function errorClientNameNotGiven(clients: Array<Client>): string {
             <br>
             <br>
             ${clients.length > 0 ? "Complete Entries:<br>" : ""}
-            ${clients.map(u => `IP: ${u.ip} | MAC: ${u.mac} | CLIENT: ${u.name} (${u.description}) `).join("<br>")}
+            ${clients.map(u => `IP: ${u.ip.padEnd(padLength).replaceAll(" ", "&nbsp;")} | MAC: ${u.mac} | CLIENT: ${u.name} (${u.description}) `).join("<br>")}
         `;
 }
 
