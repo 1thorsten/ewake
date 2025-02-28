@@ -21,7 +21,7 @@ module.exports = merge(common, {
                     output: {
                         comments: false
                     },
-                    ecma: undefined,
+                    ecma: 2023,
                     warnings: false,
                     parse: {},
                     compress: {},
